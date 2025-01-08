@@ -122,10 +122,12 @@ int main(int argc, char **argv) {
         vector<int> face = model->face(i);
         Vec3f screen_coords[3];
         Vec3f world_coords[3];
+        Vec2f uvs[3];
         for (int j = 0; j < 3; j++) {
             Vec3f v = model->vert(face[j]);
             screen_coords[j] = world2screen(v);
             world_coords[j] = v;
+            //uv[j] =
         }
         Vec3f reverseNormal = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
         reverseNormal = reverseNormal.normalize();
