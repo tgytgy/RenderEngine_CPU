@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include <algorithm>
+#include <chrono>
 #include "tgaimage.h"
 #include "model.h"
 #include "geometry.h"
