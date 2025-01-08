@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug",
-		"source" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine"
+		"build" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/cmake-build-debug",
+		"source" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU"
 	},
 	"version" : 
 	{

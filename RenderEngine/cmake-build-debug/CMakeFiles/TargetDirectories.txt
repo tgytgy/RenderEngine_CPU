@@ -1,3 +1,0 @@
-/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug/CMakeFiles/RenderEngine.dir
-/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug/CMakeFiles/rebuild_cache.dir

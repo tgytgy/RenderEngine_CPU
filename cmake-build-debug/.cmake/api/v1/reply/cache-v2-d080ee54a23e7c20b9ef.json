@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug"
+			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -539,7 +539,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine"
+			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -1127,7 +1127,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine/cmake-build-debug"
+			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/cmake-build-debug"
 		},
 		{
 			"name" : "RenderEngine_IS_TOP_LEVEL",
@@ -1151,7 +1151,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU/RenderEngine"
+			"value" : "/Users/tiangengyu/Desktop/Github/RenderEngine_CPU"
 		}
 	],
 	"kind" : "cache",

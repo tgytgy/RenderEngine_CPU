@@ -1,0 +1,10 @@
+# ninja log v6
+1	50	1736334820970330738	build.ninja	657679ad465467b2
+12	722	1736334439298370397	CMakeFiles/RenderEngine.dir/model.cpp.o	6be7dbc61e954710
+10	593	1736334439296469416	CMakeFiles/RenderEngine.dir/tgaimage.cpp.o	aa0025b6e9bbc6aa
+722	751	1736334440008437353	RenderEngine	3ae9e664514bb4a7
+9	697	1736334439295846089	CMakeFiles/RenderEngine.dir/main.cpp.o	a1dea434589b6598
+8	453	1736334829997131842	CMakeFiles/RenderEngine.dir/tgaimage.cpp.o	b60a4db0d9041f58
+8	496	1736334829996449766	CMakeFiles/RenderEngine.dir/main.cpp.o	bbc8242ec9f9b1da
+9	498	1736334829997504630	CMakeFiles/RenderEngine.dir/model.cpp.o	15b9a0222d4ed1a5
+498	527	1736334830486829594	RenderEngine	3ae9e664514bb4a7
