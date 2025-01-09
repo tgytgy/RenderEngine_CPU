@@ -25,13 +25,14 @@ Vec3f barycentric(const Vec2i &p0, const Vec2i &p1, const Vec2i &p2, const Vec2i
     };
 }
 
-void triangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2, float *zbuffer, TGAImage &image, const TGAColor &color) {
+void triangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2, const Vec2i &uv0, const Vec2i &uv1, const Vec2i &uv2, float *zbuffer, TGAImage &image, const TGAColor &color) {
     vector<int> xVec = {static_cast<int>(p0.x), static_cast<int>(p1.x), static_cast<int>(p2.x)};
     vector<int> yVec = {static_cast<int>(p0.y), static_cast<int>(p1.y), static_cast<int>(p2.y)};
     Vec2i clamp(image.get_width() - 1, image.get_height() - 1); //边界检测
     Vec2i bboxmin(max(0, *ranges::min_element(xVec)), max(0, *ranges::min_element(yVec)));
     Vec2i bboxmax(min(clamp.x, *ranges::max_element(xVec)), min(clamp.y, *ranges::max_element(yVec)));
     Vec2i P;
+    Vec2i uv;
     float zVal = 0;
     for (P.x=bboxmin.x; P.x<=bboxmax.x; P.x++) { 
         for (P.y=bboxmin.y; P.y<=bboxmax.y; P.y++) { 
@@ -42,11 +43,12 @@ void triangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2, float *zbuffer,
             zVal += p1.z * bc_screen.y;
             zVal += p2.z * bc_screen.z;
             if (zbuffer[P.x + P.y * width] < zVal) {
+                uv = Vec2i{static_cast<int>(uv0.x * bc_screen.x + uv1.x * bc_screen.y + uv2.x * bc_screen.z), static_cast<int>(uv0.y * bc_screen.x + uv1.y * bc_screen.y + uv2.y * bc_screen.z)};
                 zbuffer[P.x + P.y * width] = zVal;
-                image.set(P.x, P.y, color);
+                image.set(P.x, P.y, model->diffuse(uv));
             }
-        } 
-    } 
+        }
+    }
 }
 
 /// 绘制线段方法
@@ -122,19 +124,19 @@ int main(int argc, char **argv) {
         vector<int> face = model->face(i);
         Vec3f screen_coords[3];
         Vec3f world_coords[3];
-        Vec2f uvs[3];
+        Vec2i uvs[3];
         for (int j = 0; j < 3; j++) {
             Vec3f v = model->vert(face[j]);
             screen_coords[j] = world2screen(v);
             world_coords[j] = v;
-            //uv[j] =
+            uvs[j] = model->uv(i, j);
         }
         Vec3f reverseNormal = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
         reverseNormal = reverseNormal.normalize();
         float intensity = light_dir * reverseNormal;
         if (intensity > 0) {
             int color = static_cast<int>(intensity * 255);
-            triangle(screen_coords[0], screen_coords[1], screen_coords[2], zbuffer, image,
+            triangle(screen_coords[0], screen_coords[1], screen_coords[2], uvs[0], uvs[1], uvs[2], zbuffer, image,
                     TGAColor(color, color, color, 255));
         }
     }
