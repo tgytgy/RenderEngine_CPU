@@ -34,3 +34,31 @@ Vec3f barycentric(const Vec2i *pts, const Vec2i P) {
  一个三角形绘制到屏幕上的各个像素的深度可以由重心坐标求出来.先计算出这个点的重心坐标$\begin{bmatrix}u & v & w \\\end{bmatrix}$,然后做三个点z值的插值$A.z\cdot u+B.z\cdot u+C.z\cdot u$,注意这三个点是转换成屏幕坐标的三个点.
 
 **uv**:获取一个点的uv坐标同理,也是使用重心坐标$uv=uv_{0}\cdot u+uv_{1}\cdot v+uv_{2}\cdot w$
+
+# 3.View/Camera Transform
+*对应资料:games101_lecture_4  tiny_render_lesson4*
+
+视图变换矩阵$M_{view}=R_{view}T_{view}$, $R_{view}$是旋转矩阵 $T_{view}$是位移矩阵
+因为相机和物体相对位置不变则渲染结果不变,那么把相机放在一个标准位置上.相机移动到标准位置后,所有物体要随着相机移动.先位移相机再旋转相机.相机的观测方向是$\hat g$,向上方向是$\hat t$.
+
+相机的标准位置是:坐标是$(0,0,0)$,$\hat g$与$-z$重合,$\hat t$与$y$重合
+
+==旋转矩阵是正交矩阵,旋转矩阵的逆等于旋转矩阵的转置矩阵==
+由于求将相机旋转到坐标轴的旋转矩阵$R$很难求所以我们可以先求出将坐标轴旋转成相机的角度的矩阵,也就是转转矩阵的逆矩阵$R^{-1}$
+$$R_{view}^{-1}=\begin{bmatrix}x_{\hat g \times \hat t}&x_{t}&x_{-g}&0 \\ y_{\hat g \times \hat t}&y_{t}&y_{-g}&0 \\ z_{\hat g \times \hat t}&z_{t}&z_{-g} &0 \\ 0&0&0&1\\\end{bmatrix} \Rightarrow R_{view}=\begin{bmatrix}x_{\hat g \times \hat t}&y_{\hat g \times \hat t}&z_{\hat g \times \hat t}&0 \\ x_{t}&y_{t}&z_{t}&0 \\ x_{-g}&y_{-g}&z_{-g} &0 \\ 0&0&0&1\\\end{bmatrix}$$
+为什么上述推导成立?或者$R^{-1}$是怎么得出来的?
+$R^{-1}$就是坐标轴旋转成相机角度的矩阵,比如$x$轴$(1,0,0,0)$,因为是齐次坐标向量所以最后一个分量是0,$R^{-1}\times x$得到的向量的方向就是是$\hat g \times \hat t$的方向,其他三个轴同理.所以$$R_{view}^{-1}=R_{view}^{T} \Rightarrow R_{view}=(R_{view}^{-1})^{T}$$
+## 3.1正交投影 Orthogonal Projection
+正交投影把空间中的一个立方体区域$[l,r]\times[b,t]\times[f,n]$(以上字母分别是x,y,z轴上的范围)移动到原点并压缩成一个标准立方体(canonical cube)$[-1,1]^{3}$,将立方体转成标准立方体的矩阵是$M_{ortho}$
+$$M_{ortho}=\begin{bmatrix}
+\frac{2}{r-l}&0&0&0 \\
+0&\frac{2}{t-b}&0&0 \\
+0&0&\frac{2}{n-f}&0 \\
+0&0&0&1\\\end{bmatrix}
+\begin{bmatrix}
+1&0&0&-\frac{r+l}{2} \\
+0&1&0&-\frac{t+b}{2} \\
+0&0&1&-\frac{n+f}{2} \\
+0&0&0&1 \\\end{bmatrix}$$
+
+## 3.2
