@@ -7,6 +7,8 @@
 #include "tgaimage.h"
 #include "model.h"
 #include "geometry.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 using namespace std;
 
@@ -106,46 +108,67 @@ Vec3f world2screen(Vec3f v) {
 }
 
 int main(int argc, char **argv) {
-    std::random_device rd;  // 获取一个随机种子
-    std::mt19937 gen(rd()); // 初始化随机数生成器
-    std::uniform_int_distribution<> int_dis(0, 255);
-    TGAImage image(width, height, TGAImage::RGB);
-    const Vec3f light_dir = Vec3f(0, 0, -1);
-    if (2 == argc) {
-        model = new Model(argv[1]);
+    int width = 256, height = 256;
+    std::vector<unsigned char> buffer(width * height * 3);
+
+    // Create a gradient image
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int idx = (y * width + x) * 3;
+            buffer[idx + 0] = x % 256; // Red
+            buffer[idx + 1] = y % 256; // Green
+            buffer[idx + 2] = 128;     // Blue
+        }
+    }
+
+    if (stbi_write_png("output.png", width, height, 4, buffer.data(), width * 4)) {
+        std::cout << "PNG file written to output.png" << std::endl;
     } else {
-        model = new Model("obj/african_head.obj");
+        std::cerr << "Failed to write PNG file." << std::endl;
     }
-    auto start = chrono::high_resolution_clock::now();
-    float *zbuffer = new float[width*height];
-    for (int i=width*height; i--; zbuffer[i] = -std::numeric_limits<float>::max());
-    //核心代码开始
-    for (int i = 0; i < model->nfaces(); i++) {
-        vector<int> face = model->face(i);
-        Vec3f screen_coords[3];
-        Vec3f world_coords[3];
-        Vec2i uvs[3];
-        for (int j = 0; j < 3; j++) {
-            Vec3f v = model->vert(face[j]);
-            screen_coords[j] = world2screen(v);
-            world_coords[j] = v;
-            uvs[j] = model->uv(i, j);
-        }
-        Vec3f reverseNormal = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
-        reverseNormal = reverseNormal.normalize();
-        float intensity = light_dir * reverseNormal;
-        if (intensity > 0) {
-            int color = static_cast<int>(intensity * 255);
-            triangle(screen_coords[0], screen_coords[1], screen_coords[2], uvs[0], uvs[1], uvs[2], zbuffer, image,
-                    TGAColor(color, color, color, 255));
-        }
-    }
-    //核心代码结束
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double> duration = end - start;
-    cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
-    image.flip_vertically(); // want to have the origin at the left bottom corner of the image
-    image.write_tga_file("output.tga");
-    delete model;
+
     return 0;
+
+//    std::random_device rd;  // 获取一个随机种子
+//    std::mt19937 gen(rd()); // 初始化随机数生成器
+//    std::uniform_int_distribution<> int_dis(0, 255);
+//    TGAImage image(width, height, TGAImage::RGB);
+//    const Vec3f light_dir = Vec3f(0, 0, -1);
+//    if (2 == argc) {
+//        model = new Model(argv[1]);
+//    } else {
+//        model = new Model("obj/african_head.obj");
+//    }
+//    auto start = chrono::high_resolution_clock::now();
+//    float *zbuffer = new float[width * height];
+//    for (int i = width * height; i--; zbuffer[i] = -std::numeric_limits<float>::max());
+//    //核心代码开始
+//    for (int i = 0; i < model->nfaces(); i++) {
+//        vector<int> face = model->face(i);
+//        Vec3f screen_coords[3];
+//        Vec3f world_coords[3];
+//        Vec2i uvs[3];
+//        for (int j = 0; j < 3; j++) {
+//            Vec3f v = model->vert(face[j]);
+//            screen_coords[j] = world2screen(v);
+//            world_coords[j] = v;
+//            uvs[j] = model->uv(i, j);
+//        }
+//        Vec3f reverseNormal = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
+//        reverseNormal = reverseNormal.normalize();
+//        float intensity = light_dir * reverseNormal;
+//        if (intensity > 0) {
+//            int color = static_cast<int>(intensity * 255);
+//            triangle(screen_coords[0], screen_coords[1], screen_coords[2], uvs[0], uvs[1], uvs[2], zbuffer, image,
+//                     TGAColor(color, color, color, 255));
+//        }
+//    }
+//    //核心代码结束
+//    auto end = chrono::high_resolution_clock::now();
+//    chrono::duration<double> duration = end - start;
+//    cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
+//    image.flip_vertically(); // want to have the origin at the left bottom corner of the image
+//    image.write_tga_file("output.tga");
+//    delete model;
+//    return 0;
 }

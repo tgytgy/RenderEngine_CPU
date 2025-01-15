@@ -38,6 +38,11 @@ Vec3f barycentric(const Vec2i *pts, const Vec2i P) {
 # 3.View/Camera Transform
 *对应资料:games101_lecture_4  tiny_render_lesson4*
 
+投影需要经历三个变换叫做**MVP**变换
+1. Model Transformation(摆模型)
+2. View Transformation(摆相机)
+3. Projection Transformation(正交/投影变换)
+
 视图变换矩阵$M_{view}=R_{view}T_{view}$, $R_{view}$是旋转矩阵 $T_{view}$是位移矩阵
 因为相机和物体相对位置不变则渲染结果不变,那么把相机放在一个标准位置上.相机移动到标准位置后,所有物体要随着相机移动.先位移相机再旋转相机.相机的观测方向是$\hat g$,向上方向是$\hat t$.
 
@@ -49,7 +54,7 @@ $$R_{view}^{-1}=\begin{bmatrix}x_{\hat g \times \hat t}&x_{t}&x_{-g}&0 \\ y_{\ha
 为什么上述推导成立?或者$R^{-1}$是怎么得出来的?
 $R^{-1}$就是坐标轴旋转成相机角度的矩阵,比如$x$轴$(1,0,0,0)$,因为是齐次坐标向量所以最后一个分量是0,$R^{-1}\times x$得到的向量的方向就是是$\hat g \times \hat t$的方向,其他三个轴同理.所以$$R_{view}^{-1}=R_{view}^{T} \Rightarrow R_{view}=(R_{view}^{-1})^{T}$$
 ## 3.1正交投影 Orthogonal Projection
-正交投影把空间中的一个立方体区域$[l,r]\times[b,t]\times[f,n]$(以上字母分别是x,y,z轴上的范围)移动到原点并压缩成一个标准立方体(canonical cube)$[-1,1]^{3}$,将立方体转成标准立方体的矩阵是$M_{ortho}$
+正交投影把空间中的一个立方体区域$[l,r]\times[b,t]\times[f,n]$(以上字母分别是x,y,z轴上的范围)移动到原点并压缩成一个标准立方体(canonical cube/NDC)$[-1,1]^{3}$,将立方体转成标准立方体的矩阵是$M_{ortho}$
 $$M_{ortho}=\begin{bmatrix}
 \frac{2}{r-l}&0&0&0 \\
 0&\frac{2}{t-b}&0&0 \\
@@ -61,4 +66,13 @@ $$M_{ortho}=\begin{bmatrix}
 0&0&1&-\frac{n+f}{2} \\
 0&0&0&1 \\\end{bmatrix}$$
 
-## 3.2
+## 3.2透视投影 Perspective Projection
+透视投影的过程可以看做是将视椎体压成一个立方体，然后对这个立方体进行正交投影，其中n是近裁剪平面的z坐标，f是远裁剪平面的z坐标,这个变换矩阵$M_{presp\rightarrow ortho}$可以通过相似三角形，近平面的的点不变和远平面的中心点不变这三个性质求出
+$$M_{presp\rightarrow ortho}=\begin{bmatrix}n&0&0&0\\0&n&0&0\\0&0&n+f&-nf\\0&0&0&n\\\end{bmatrix}$$
+最终透视投影变换矩阵是：$M_{presp}=M_{ortho}M_{presp\rightarrow ortho}$
+# 4.视口变换
+将NDC映射到$[0,width][0,heigh]$,viewport transform matrix:
+$$M_{viewport}=\begin{bmatrix}\frac{width}{2}&0&0&\frac{width}{2}\\0&\frac{height}{2}&0&\frac{height}{2}\\0&0&1&0\\0&0&0&1\\\end{bmatrix}$$
+
+## 5.光栅化
+三角形绘制到屏幕上见文章开头
