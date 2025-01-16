@@ -107,27 +107,45 @@ Vec3f world2screen(Vec3f v) {
     return Vec3f(int((v.x+1.)*width/2.+.5), int((v.y+1.)*height/2.+.5), v.z);
 }
 
+void model_transform(const Vec3f worldPos, const Vec3f rotate, const Vec3f scale){
+    
+}
+
 int main(int argc, char **argv) {
-    int width = 256, height = 256;
-    std::vector<unsigned char> buffer(width * height * 3);
-
-    // Create a gradient image
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            int idx = (y * width + x) * 3;
-            buffer[idx + 0] = x % 256; // Red
-            buffer[idx + 1] = y % 256; // Green
-            buffer[idx + 2] = 128;     // Blue
-        }
+    //方法1
+    int n[ 10 ];
+    for ( int i = 0; i < 10; i++ )
+    {
+        n[ i ] = i + 100;
     }
 
-    if (stbi_write_png("output.png", width, height, 4, buffer.data(), width * 4)) {
-        std::cout << "PNG file written to output.png" << std::endl;
-    } else {
-        std::cerr << "Failed to write PNG file." << std::endl;
+    //方法2
+    int* arr = new int[10];
+    for ( int i = 0; i < 10; i++ )
+    {
+        arr[ i ] = i + 100;
     }
-
-    return 0;
+    delete[] arr;
+//    int width = 256, height = 256;
+//    std::vector<unsigned char> buffer(width * height * 3);
+//
+//    // Create a gradient image
+//    for (int y = 0; y < height; y++) {
+//        for (int x = 0; x < width; x++) {
+//            int idx = (y * width + x) * 3;
+//            buffer[idx + 0] = x % 256; // Red
+//            buffer[idx + 1] = y % 256; // Green
+//            buffer[idx + 2] = 128;     // Blue
+//        }
+//    }
+//
+//    if (stbi_write_png("output.png", width, height, 4, buffer.data(), width * 4)) {
+//        std::cout << "PNG file written to output.png" << std::endl;
+//    } else {
+//        std::cerr << "Failed to write PNG file." << std::endl;
+//    }
+//
+//    return 0;
 
 //    std::random_device rd;  // 获取一个随机种子
 //    std::mt19937 gen(rd()); // 初始化随机数生成器
