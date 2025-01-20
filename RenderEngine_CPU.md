@@ -70,6 +70,8 @@ $$M_{ortho}=\begin{bmatrix}
 透视投影的过程可以看做是将视椎体压成一个立方体，然后对这个立方体进行正交投影，其中n是近裁剪平面的z坐标，f是远裁剪平面的z坐标,这个变换矩阵$M_{presp\rightarrow ortho}$可以通过相似三角形，近平面的的点不变和远平面的中心点不变这三个性质求出
 $$M_{presp\rightarrow ortho}=\begin{bmatrix}n&0&0&0\\0&n&0&0\\0&0&n+f&-nf\\0&0&0&n\\\end{bmatrix}$$
 最终透视投影变换矩阵是：$M_{presp}=M_{ortho}M_{presp\rightarrow ortho}$
+为什么$M_{presp\rightarrow ortho}$这个矩阵中没有可视角度(field of view)?
+因为在unity中调整可视角度但是不调整远近裁剪平面图像还是会发生变化,这和$M_{presp\rightarrow ortho}$中只有远近裁剪平面在直觉上相悖.其实在确定好远近平面后调整可视角度,近裁剪平面的大小会发生改变,导致变换后的立方体的大小也会发生变化,所以调整可视角度导致的画面变化其实是体现在$M_{ortho}$矩阵中.
 # 4.视口变换
 将NDC映射到$[0,width][0,heigh]$,viewport transform matrix:
 $$M_{viewport}=\begin{bmatrix}\frac{width}{2}&0&0&\frac{width}{2}\\0&\frac{height}{2}&0&\frac{height}{2}\\0&0&1&0\\0&0&0&1\\\end{bmatrix}$$

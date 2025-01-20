@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include "model.h"
+#include "MathUtils.h"
 
 Model::Model(const char *filename) : verts_(), faces_(), norms_(), uv_() {
     std::ifstream in;
@@ -41,7 +42,7 @@ Model::Model(const char *filename) : verts_(), faces_(), norms_(), uv_() {
         }
     }
     std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.size() << std::endl;
-    load_texture(filename, "_diffuse.tga", diffusemap_);
+    //load_texture(filename, "_diffuse.tga", diffusemap_);
 }
 
 Model::~Model() {
@@ -65,7 +66,30 @@ Vec3f Model::vert(int i) {
     return verts_[i];
 }
 
-void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
+void Model::set_transform(const Vec3f& pos, const Vec3f& rotate, const Vec3f& scale) {
+    MathUtils::copy_vec(pos, this->pos);
+    MathUtils::copy_vec(rotate, this->rotate);
+    MathUtils::copy_vec(scale, this->scale);
+    update_transform_matrix();
+}
+
+void Model::update_transform_matrix() {
+    t_matrix.setValue(0, 0, 1);
+    t_matrix.setValue(1, 1, 1);
+    t_matrix.setValue(2, 2, 1);
+    t_matrix.setValue(3, 3, 1);
+    t_matrix.setValue(0, 3, pos.x);
+    t_matrix.setValue(1, 3, pos.y);
+    t_matrix.setValue(2, 3, pos.z);
+    s_matrix.setValue(0, 0, scale.x);
+    s_matrix.setValue(1, 1, scale.y);
+    s_matrix.setValue(2, 2, scale.z);
+    s_matrix.setValue(3, 3, 1);
+    MathUtils::set_rotate_matrix(rotate, r_matrix);
+    MathUtils::matrix_multiply(t_matrix, r_matrix, s_matrix, model_transform_matrix);
+}
+
+/*void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
     std::string texfile(filename);
     size_t dot = texfile.find_last_of(".");
     if (dot!=std::string::npos) {
@@ -82,5 +106,5 @@ TGAColor Model::diffuse(Vec2i uv) {
 Vec2i Model::uv(int iface, int nvert) {
     int idx = faces_[iface][nvert].raw[1];
     return Vec2i(uv_[idx].x*diffusemap_.get_width(), uv_[idx].y*diffusemap_.get_height());
-}
+}*/
 
