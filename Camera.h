@@ -41,6 +41,8 @@ private:
     Matrix4x4 o_matrix;             //正交投影矩阵
     Matrix4x4 p_matrix;             //透视投影矩阵
     Matrix4x4 p2o_matrix;           //透视转正交矩阵
+
+    void cal_o_matrix();
 };
 
 
