@@ -14,4 +14,8 @@ add_executable(RenderEngine main.cpp tgaimage.cpp tgaimage.h model.cpp model.h g
         MathUtils.h
         RenderOutput.cpp
         RenderOutput.h
+        stb_image_write.h
+        stb_image.h
+        Light.cpp
+        Light.h
 )

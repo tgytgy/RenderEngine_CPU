@@ -10,28 +10,22 @@ Camera::Camera(const Vec3f& worldPos, const Vec3f& rotate, const Vec2i& resoluti
     this->near_clip = near_clip;
     this->far_clip = far_clip;
     this->o_size = o_size;
-    this->projection_tp = projection_tp;
+    this->camera_type = camera_type;
     MathUtils::set_rotate_matrix(rotate, raw_to_crt_matrix);
+    MathUtils::set_rotate_matrix({-rotate.x, -rotate.y, -rotate.z}, r_matrix);
     MathUtils::matrix_multiply_vec(raw_to_crt_matrix, raw_view_dir, view_dir);
     MathUtils::matrix_multiply_vec(raw_to_crt_matrix, raw_up_dir, up_dir);
-    const Vec3f view_cross_up = view_dir ^ up_dir;
-    r_matrix.setValue(0, 0, view_cross_up.x);
-    r_matrix.setValue(0, 1, view_cross_up.y);
-    r_matrix.setValue(0, 2, view_cross_up.z);
-    r_matrix.setValue(1, 0, up_dir.x);
-    r_matrix.setValue(1, 1, up_dir.y);
-    r_matrix.setValue(1, 2, up_dir.z);
-    r_matrix.setValue(2, 0, -1 * view_dir.x);
-    r_matrix.setValue(2, 1, -1 * view_dir.y);
-    r_matrix.setValue(2, 2, -1 * view_dir.z);
-    t_matrix.setValue(0, 2, -1 * worldPos.x);
-    t_matrix.setValue(1, 2, -1 * worldPos.y);
-    t_matrix.setValue(2, 2, -1 * worldPos.z);
+    t_matrix.setValue(0, 0, 1);
+    t_matrix.setValue(1, 1, 1);
+    t_matrix.setValue(2, 2, 1);
+    t_matrix.setValue(0, 3, -1 * worldPos.x);
+    t_matrix.setValue(1, 3, -1 * worldPos.y);
+    t_matrix.setValue(2, 3, -1 * worldPos.z);
     MathUtils::matrix_multiply(r_matrix, t_matrix, v_matrix);
+    const float n = -1 * near_clip; //近裁剪平面z坐标
+    const float f = -1 * far_clip; //远裁剪平面z坐标
     switch (camera_type) {
         case Perspective:
-            const float n = -1 * near_clip; //近裁剪平面z坐标
-            const float f = -1 * far_clip; //远裁剪平面z坐标
             p2o_matrix.setValue(0, 0, n);
             p2o_matrix.setValue(1, 1, n);
             p2o_matrix.setValue(2, 2, n + f);
@@ -45,6 +39,7 @@ Camera::Camera(const Vec3f& worldPos, const Vec3f& rotate, const Vec2i& resoluti
             max_pos.z = f;
             cal_o_matrix();
             MathUtils::matrix_multiply(o_matrix, p2o_matrix, p_matrix);
+            projection_matrix = &p_matrix;
             break;
         case Orthogonal:
             max_pos.x = this->o_size * static_cast<float>(resolution.x) / static_cast<float>(resolution.y);
@@ -54,6 +49,7 @@ Camera::Camera(const Vec3f& worldPos, const Vec3f& rotate, const Vec2i& resoluti
             min_pos.y = -1 * max_pos.y;
             min_pos.z = -1 * this->far_clip;
             cal_o_matrix();
+            projection_matrix = &o_matrix;
             break;
     }
 }
@@ -73,4 +69,14 @@ void Camera::cal_o_matrix() {
     MathUtils::matrix_multiply(o_s_matrix, o_t_matrix, o_matrix);
 }
 
+const Matrix4x4& Camera::get_view_matrix() {
+    return v_matrix;
+}
 
+const Matrix4x4 * Camera::get_projection_matrix() {
+    return projection_matrix;
+}
+
+const Vec3f & Camera::get_view_dir() {
+    return view_dir;
+}

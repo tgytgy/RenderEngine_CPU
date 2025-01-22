@@ -89,6 +89,11 @@ void Model::update_transform_matrix() {
     MathUtils::matrix_multiply(t_matrix, r_matrix, s_matrix, model_transform_matrix);
 }
 
+const Matrix4x4 & Model::get_transform_matrix() {
+    return model_transform_matrix;
+}
+
+
 /*void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
     std::string texfile(filename);
     size_t dot = texfile.find_last_of(".");

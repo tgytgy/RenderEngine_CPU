@@ -8,13 +8,14 @@
 #include "model.h"
 #include "geometry.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "Camera.h"
+#include "Light.h"
+#include "RenderOutput.h"
 
 using namespace std;
 
 const auto white = TGAColor(255, 255, 255, 255);
 const auto red = TGAColor(255, 0, 0, 255);
-Model *model = nullptr;
 const int width = 800;
 const int height = 800;
 
@@ -47,7 +48,7 @@ void triangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2, const Vec2i &uv
             if (zbuffer[P.x + P.y * width] < zVal) {
                 uv = Vec2i{static_cast<int>(uv0.x * bc_screen.x + uv1.x * bc_screen.y + uv2.x * bc_screen.z), static_cast<int>(uv0.y * bc_screen.x + uv1.y * bc_screen.y + uv2.y * bc_screen.z)};
                 zbuffer[P.x + P.y * width] = zVal;
-                image.set(P.x, P.y, model->diffuse(uv));
+                //image.set(P.x, P.y, model->diffuse(uv));
             }
         }
     }
@@ -112,40 +113,26 @@ void model_transform(const Vec3f worldPos, const Vec3f rotate, const Vec3f scale
 }
 
 int main(int argc, char **argv) {
-    //方法1
-    int n[ 10 ];
-    for ( int i = 0; i < 10; i++ )
-    {
-        n[ i ] = i + 100;
-    }
-
-    //方法2
-    int* arr = new int[10];
-    for ( int i = 0; i < 10; i++ )
-    {
-        arr[ i ] = i + 100;
-    }
-    delete[] arr;
-//    int width = 256, height = 256;
-//    std::vector<unsigned char> buffer(width * height * 3);
-//
-//    // Create a gradient image
-//    for (int y = 0; y < height; y++) {
-//        for (int x = 0; x < width; x++) {
-//            int idx = (y * width + x) * 3;
-//            buffer[idx + 0] = x % 256; // Red
-//            buffer[idx + 1] = y % 256; // Green
-//            buffer[idx + 2] = 128;     // Blue
-//        }
-//    }
-//
-//    if (stbi_write_png("output.png", width, height, 4, buffer.data(), width * 4)) {
-//        std::cout << "PNG file written to output.png" << std::endl;
-//    } else {
-//        std::cerr << "Failed to write PNG file." << std::endl;
-//    }
-//
-//    return 0;
+    const Vec3f camera_pos(0,0,-1);
+    const Vec3f camera_rotate(0,0,0);
+    const Vec2i resolution(960, 540);
+    const Vec3f light_dir(0, 0, -1);
+    constexpr float fov = 60.f;
+    constexpr float near_clip = 0.1f;
+    constexpr float far_clip = 100.f;
+    constexpr float o_size = 5.f;
+    constexpr CameraType camera_type = Orthogonal;
+    const Vec3f obj_pos(0,0,-2);
+    const Vec3f obj_rotate(0,0,0);
+    const Vec3f obj_scale(1,1,1);
+    auto* obj = new Model("obj/cube.obj");
+    obj->set_transform(obj_pos, obj_rotate, obj_scale);
+    Model* model = {obj};
+    Camera camera(camera_pos, camera_rotate, resolution, fov, near_clip, far_clip, o_size, camera_type);
+    Light light(light_dir);
+    RenderOutput output(&camera, resolution, model, &light, 1);
+    output.rasterize();
+    return 0;
 
 //    std::random_device rd;  // 获取一个随机种子
 //    std::mt19937 gen(rd()); // 初始化随机数生成器

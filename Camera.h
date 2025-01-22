@@ -18,6 +18,9 @@ enum CameraType {
 class Camera {
 public:
     Camera(const Vec3f& worldPos, const Vec3f& rotate, const Vec2i& resolution, float field_of_view, float near_clip, float far_clip, float o_size, CameraType camera_type);
+    const Matrix4x4& get_view_matrix();
+    const Matrix4x4* get_projection_matrix();
+    const Vec3f& get_view_dir();
 private:
     Vec3f worldPos; //相机世界坐标
     Vec3f rotate;   //相机旋转
@@ -25,7 +28,7 @@ private:
     float near_clip;        //近裁剪平面
     float far_clip;         //远裁剪平面
     float o_size;           //正交相机size
-    int projection_tp;      //相机类型 0 透视 1 正交
+    CameraType camera_type;      //相机类型 0 透视 1 正交
     Vec3f min_pos;          //xyz最小点
     Vec3f max_pos;          //xyz最大点
     Vec3f raw_view_dir = {0, 0, -1};                 //观测方向
@@ -41,7 +44,8 @@ private:
     Matrix4x4 o_matrix;             //正交投影矩阵
     Matrix4x4 p_matrix;             //透视投影矩阵
     Matrix4x4 p2o_matrix;           //透视转正交矩阵
-
+    Matrix4x4* projection_matrix;   //指向投影矩阵
+    
     void cal_o_matrix();
 };
 

@@ -59,11 +59,11 @@ void MathUtils::matrix_multiply_v(const Matrix4x4 &m, const Vec3f &v, const floa
     ret.z = m.getValue(2, 0) * x + m.getValue(2, 1) * y + m.getValue(2, 2) * z + m.getValue(2, 3) * w;
 }
 
-void MathUtils::matrix_multiply_vec(const Matrix4x4 &m, const Vec3f &v, Vec3f &ret) {
+void MathUtils::matrix_multiply_vec(const Matrix4x4 &m, Vec3f v, Vec3f &ret) {
     matrix_multiply_v(m, v, 0.0f, ret);
 }
 
-void MathUtils::matrix_multiply_point(const Matrix4x4 &m, const Vec3f &v, Vec3f &ret) {
+void MathUtils::matrix_multiply_point(const Matrix4x4 &m, Vec3f v, Vec3f &ret) {
     matrix_multiply_v(m, v, 1.0f, ret);
 }
 
@@ -71,4 +71,13 @@ void MathUtils::copy_vec(const Vec3f &v, Vec3f &ret) {
     ret.x = v.x;
     ret.y = v.y;
     ret.z = v.z;
+}
+
+Vec3f MathUtils::barycentric(const Vec2i &p0, const Vec2i &p1, const Vec2i &p2, const Vec2i &P) {
+    Vec3i u = Vec3i(p1.x - p0.x, p2.x - p0.x, p0.x - P.x) ^ Vec3i(p1.y - p0.y, p2.y - p0.y, p0.y - P.y);
+    if (std::abs(u.z) < 1)return {-1, 1, 1};
+    return {
+        1.f - static_cast<float>(u.x + u.y) / static_cast<float>(u.z),
+        static_cast<float>(u.x) / static_cast<float>(u.z), static_cast<float>(u.y) / static_cast<float>(u.z)
+    };
 }
