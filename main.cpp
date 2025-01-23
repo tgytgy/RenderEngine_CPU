@@ -146,6 +146,39 @@ int main(int argc, char **argv) {
     cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
     return 0;
 
+
+    //读png写法
+    /*// 图片路径
+    const char* filepath = "example.png";
+
+    // 加载图片
+    int width, height, channels;
+    unsigned char* image_data = stbi_load(filepath, &width, &height, &channels, 0);
+
+    if (image_data == NULL) {
+        printf("Failed to load image: %s\n", stbi_failure_reason());
+        return 1;
+    }
+
+    // 输出图片信息
+    printf("Image loaded successfully!\n");
+    printf("Width: %d, Height: %d, Channels: %d\n", width, height, channels);
+
+    // 处理图像数据（例如，打印前 10 个像素的 RGB 值）
+    for (int i = 0; i < 10; ++i) {
+        printf("Pixel %d: ", i);
+        for (int c = 0; c < channels; ++c) {
+            printf("%d ", image_data[i * channels + c]);
+        }
+        printf("\n");
+    }
+
+    // 释放图像数据
+    stbi_image_free(image_data);*/
+
+
+    
+    
 //    std::random_device rd;  // 获取一个随机种子
 //    std::mt19937 gen(rd()); // 初始化随机数生成器
 //    std::uniform_int_distribution<> int_dis(0, 255);
