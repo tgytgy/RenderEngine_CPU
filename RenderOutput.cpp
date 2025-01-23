@@ -22,14 +22,6 @@ RenderOutput::RenderOutput(Camera* camera, const Vec2i& resolution, Model* model
     viewport_matrix.setValue(1, 3, half_height);
     viewport_matrix.setValue(2, 2, 1);
     viewport_matrix.setValue(3, 3, 1);
-    for (int i = 0; i < resolution.x * resolution.y; i++) {
-        int j = i * 4;
-        *(z_buffer + i) = -std::numeric_limits<float>::max();
-        image_arr[j] = 0;
-        image_arr[j+1] = 0;
-        image_arr[j+2] = 0;
-        image_arr[j+3] = 255;
-    }
 }
 
 void RenderOutput::set_pixel(const int x, const int y, Color color) {
@@ -63,10 +55,10 @@ void RenderOutput::triangle(Vec3f& p0, Vec3f& p1, Vec3f& p2, Color color) {
 }
 
 void RenderOutput::rasterize() {
+    clear_buffer();
     Model* crt_model = nullptr;
     for (int k = 0; k < model_count; k++) {
         crt_model = model + k;
-        cout << "count: " <<crt_model->nfaces() << endl;
         for (int i = 0; i < crt_model->nfaces(); i++) {
             vector<int> face = crt_model->face(i);
             Vec3f viewport_pos[3];
@@ -74,22 +66,37 @@ void RenderOutput::rasterize() {
             for (int j = 0; j < 3; j++) {
                 Vec3f w_pos = crt_model->vert(face[j]);
                 world_pos[j] = w_pos;
-                MathUtils::matrix_multiply_point(crt_model->get_transform_matrix(), w_pos, viewport_pos[j]);
-                MathUtils::matrix_multiply_point(camera->get_view_matrix(), viewport_pos[j], viewport_pos[j]);
+                crt_model->get_world_pos(w_pos, world_pos[j]);
+                MathUtils::matrix_multiply_point(camera->get_view_matrix(), world_pos[j], viewport_pos[j]);
                 MathUtils::matrix_multiply_point(*camera->get_projection_matrix(), viewport_pos[j], viewport_pos[j]);
                 MathUtils::matrix_multiply_point(viewport_matrix, viewport_pos[j], viewport_pos[j]);
             }
             Vec3f reverseNormal = (world_pos[2] - world_pos[0]) ^ (world_pos[1] - world_pos[0]);
             reverseNormal = reverseNormal.normalize();
             float intensity = light->get_dir() * reverseNormal;
-            cout << camera->get_view_dir() * reverseNormal << endl;
-            if (camera->get_view_dir() * reverseNormal > 0.0f) {
+            float cos_view_face = camera->get_view_dir() * reverseNormal;
+            if (cos_view_face > 0.0f) {
                 int color = static_cast<int>(intensity * 255);
                 triangle(viewport_pos[0], viewport_pos[1], viewport_pos[2], Color(color, color, color, 255));
             }
         }
     }
-    stbi_write_png("output.png", resolution.x, resolution.y, 4, image_arr, resolution.x * 4);
+}
+
+void RenderOutput::write_png(string png_name) {
+    png_name+=".png";
+    stbi_write_png(png_name.data(), resolution.x, resolution.y, 4, image_arr, resolution.x * 4);
+}
+
+void RenderOutput::clear_buffer() {
+    for (int i = 0; i < resolution.x * resolution.y; i++) {
+        int j = i * 4;
+        *(z_buffer + i) = -std::numeric_limits<float>::max();
+        image_arr[j] = 0;
+        image_arr[j+1] = 0;
+        image_arr[j+2] = 0;
+        image_arr[j+3] = 255;
+    }
 }
 
 RenderOutput::~RenderOutput() {

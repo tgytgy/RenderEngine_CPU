@@ -33,6 +33,7 @@ public:
     void set_transform(const Vec3f& pos, const Vec3f& rotate, const Vec3f& scale);
     void update_transform_matrix();
     const Matrix4x4& get_transform_matrix();
+    void get_world_pos(const Vec3f& raw_pos, Vec3f &world_pos);
 };
 
 #endif //__MODEL_H__

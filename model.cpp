@@ -93,6 +93,10 @@ const Matrix4x4 & Model::get_transform_matrix() {
     return model_transform_matrix;
 }
 
+void Model::get_world_pos(const Vec3f &raw_pos, Vec3f &world_pos) {
+    MathUtils::matrix_multiply_point(get_transform_matrix(), raw_pos, world_pos);
+}
+
 
 /*void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
     std::string texfile(filename);

@@ -3,15 +3,18 @@
 //
 
 #include "MathUtils.h"
+
+#include <iostream>
+
 #include "Matrix4x4.h"
 
 void MathUtils::set_rotate_matrix(const Vec3f& angles, Matrix4x4& matrix) {
-    float sin_x = sinf(angles.x);
-    float cos_x = cosf(angles.x);
-    float sin_y = sinf(angles.y);
-    float cos_y = cosf(angles.y);
-    float sin_z = sinf(angles.z);
-    float cos_z = cosf(angles.z);
+    float sin_x = sinf(get_radians(angles.x));
+    float cos_x = cosf(get_radians(angles.x));
+    float sin_y = sinf(get_radians(angles.y));
+    float cos_y = cosf(get_radians(angles.y));
+    float sin_z = sinf(get_radians(angles.z));
+    float cos_z = cosf(get_radians(angles.z));
     matrix.setValue(0, 0, cos_y * cos_z);
     matrix.setValue(1, 0, sin_x * sin_y * cos_z + cos_x * sin_z);
     matrix.setValue(2, 0, -1 * cos_x * sin_y * cos_z + sin_x * sin_z);
@@ -23,6 +26,8 @@ void MathUtils::set_rotate_matrix(const Vec3f& angles, Matrix4x4& matrix) {
     matrix.setValue(2, 2, cos_x * cos_y);
     matrix.setValue(3, 3, 1);
 }
+
+float MathUtils::Pi = 3.14159265358979323846264338327950288f;
 
 void MathUtils::matrix_multiply(const Matrix4x4 &m, const Matrix4x4 &m1, Matrix4x4 &ret) {
     for (int i = 0; i < 4; ++i) {
@@ -50,7 +55,7 @@ void MathUtils::matrix_multiply(const Matrix4x4 &m, const Matrix4x4 &m1, const M
     }
 }
 
-void MathUtils::matrix_multiply_v(const Matrix4x4 &m, const Vec3f &v, const float& w , Vec3f &ret) {
+void MathUtils::matrix_multiply_v(const Matrix4x4 &m, const Vec3f &v, const float &w, Vec3f &ret) {
     float x = v.x;
     float y = v.y;
     float z = v.z;
@@ -64,7 +69,19 @@ void MathUtils::matrix_multiply_vec(const Matrix4x4 &m, Vec3f v, Vec3f &ret) {
 }
 
 void MathUtils::matrix_multiply_point(const Matrix4x4 &m, Vec3f v, Vec3f &ret) {
+    const float _w = m.getValue(3, 0) * v.x + m.getValue(3, 1) * v.y + m.getValue(3, 2) * v.z + m.getValue(3, 3);
     matrix_multiply_v(m, v, 1.0f, ret);
+    ret.x/=_w;
+    ret.y/=_w;
+    ret.z/=_w;
+}
+
+void MathUtils::clear_matrix(Matrix4x4 &m) {
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            m.setValue(i, j, 0.0f);
+        }
+    }
 }
 
 void MathUtils::copy_vec(const Vec3f &v, Vec3f &ret) {
@@ -80,4 +97,8 @@ Vec3f MathUtils::barycentric(const Vec2i &p0, const Vec2i &p1, const Vec2i &p2, 
         1.f - static_cast<float>(u.x + u.y) / static_cast<float>(u.z),
         static_cast<float>(u.x) / static_cast<float>(u.z), static_cast<float>(u.y) / static_cast<float>(u.z)
     };
+}
+
+float MathUtils::get_radians(const float degrees) {
+    return degrees * (Pi/180.f);
 }

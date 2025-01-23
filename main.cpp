@@ -113,25 +113,37 @@ void model_transform(const Vec3f worldPos, const Vec3f rotate, const Vec3f scale
 }
 
 int main(int argc, char **argv) {
+    auto start = chrono::high_resolution_clock::now();
+
     const Vec3f camera_pos(0,0,-1);
     const Vec3f camera_rotate(0,0,0);
-    const Vec2i resolution(960, 540);
+    const Vec2i resolution(1920, 1080);
     const Vec3f light_dir(0, 0, -1);
     constexpr float fov = 60.f;
-    constexpr float near_clip = 0.1f;
-    constexpr float far_clip = 100.f;
-    constexpr float o_size = 5.f;
-    constexpr CameraType camera_type = Orthogonal;
-    const Vec3f obj_pos(0,0,-2);
-    const Vec3f obj_rotate(0,0,0);
+    constexpr float near_clip = 0.3f;
+    constexpr float far_clip = 1000.f;
+    constexpr float o_size = 2.f;
+    constexpr CameraType camera_type = CameraType::Perspective;
+    const Vec3f obj_pos(0,0,-4);
+    Vec3f obj_rotate(0,0,0);
     const Vec3f obj_scale(1,1,1);
-    auto* obj = new Model("obj/cube.obj");
+    auto* obj = new Model("obj/man.obj");  //man triangl
     obj->set_transform(obj_pos, obj_rotate, obj_scale);
     Model* model = {obj};
     Camera camera(camera_pos, camera_rotate, resolution, fov, near_clip, far_clip, o_size, camera_type);
     Light light(light_dir);
     RenderOutput output(&camera, resolution, model, &light, 1);
-    output.rasterize();
+
+    for (int x = 0; x < 360; x++) {
+        obj_rotate.y = x;
+        obj->set_transform(obj_pos, obj_rotate, obj_scale);
+        output.rasterize();
+        output.write_png("output_directory/output_"+std::to_string(x));
+    }
+    
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> duration = end - start;
+    cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
     return 0;
 
 //    std::random_device rd;  // 获取一个随机种子
