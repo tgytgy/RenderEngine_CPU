@@ -1,10 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include <vector>
-
-#include "geometry.h"
-
 class Matrix4x4 {
 private:
     float matrix[4][4]{};

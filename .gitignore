@@ -5,3 +5,8 @@
 .obsidian/themes/Obsidian Nord/manifest.json
 .obsidian/themes/Obsidian Nord/theme.css
 .obsidian/workspace.json
+/cmake-build-debug/CMakeFiles
+/cmake-build-debug/output_directory
+/cmake-build-debug/CMakeFiles
+/cmake-build-debug/.cmake
+/cmake-build-debug/.cmake

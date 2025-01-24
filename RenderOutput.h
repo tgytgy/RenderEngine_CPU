@@ -7,16 +7,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "model.h"
-#include "stb_image_write.h"
 
-
-struct Color {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
-    Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) : r(r), g(g), b(b), a(a) {}
-};
 class RenderOutput {
 private:
     Camera* camera;
@@ -29,8 +20,9 @@ private:
     float* z_buffer;
     unsigned char* image_arr;
     void set_pixel(int x, int y, Color color);
-    void triangle(Vec3f& p0, Vec3f& p1, Vec3f& p2, Color color);
+    void triangle(Model* model, Vec3f& p0, Vec3f& p1, Vec3f& p2, Vec2f (&uvs)[3], Vec3f (&normals)[3]);
     void clear_buffer();
+    void flip_image_vertically(unsigned char* image_arr, int width, int height);
 public:
     RenderOutput(Camera* camera, const Vec2i& resolution, Model* model, Light* light, int model_count);
     void rasterize();

@@ -5,8 +5,10 @@
 #include <vector>
 #include "model.h"
 #include "MathUtils.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
-Model::Model(const char *filename) : verts_(), faces_(), norms_(), uv_() {
+Model::Model(const char *filename, const char* tex_name) : verts_(), faces_(), norms_(), uv_() {
     std::ifstream in;
     in.open (filename, std::ifstream::in);
     if (in.fail()) return;
@@ -41,11 +43,13 @@ Model::Model(const char *filename) : verts_(), faces_(), norms_(), uv_() {
             faces_.push_back(f);
         }
     }
+    tex_data = stbi_load(tex_name, &tex_width, &tex_height, &tex_channels, 0);
     std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.size() << std::endl;
     //load_texture(filename, "_diffuse.tga", diffusemap_);
 }
 
 Model::~Model() {
+    stbi_image_free(tex_data);
 }
 
 int Model::nverts() {
@@ -97,6 +101,38 @@ void Model::get_world_pos(const Vec3f &raw_pos, Vec3f &world_pos) {
     MathUtils::matrix_multiply_point(get_transform_matrix(), raw_pos, world_pos);
 }
 
+
+Color Model::get_color(const Vec2f uv) {
+    // 钳制 UV 坐标
+    float clamped_u = std::clamp(uv.x, 0.0f, 1.0f);
+    float clamped_v = 1.0f - std::clamp(uv.y, 0.0f, 1.0f);
+
+    // 计算纹理坐标
+    const int u = static_cast<int>(std::round(static_cast<float>(tex_width - 1) * clamped_u));
+    const int v = static_cast<int>(std::round(static_cast<float>(tex_height - 1) * clamped_v));
+
+    // 边界检查
+    const int safe_u = std::clamp(u, 0, tex_width - 1);
+    const int safe_v = std::clamp(v, 0, tex_height - 1);
+
+    // 采样颜色
+    const int index = 4 * (safe_u + safe_v * tex_width);
+    return Color(tex_data[index], tex_data[index + 1], tex_data[index + 2], tex_data[index + 3]);
+}
+
+Vec2f Model::uv(int iface, int nvert) {
+    int idx = faces_[iface][nvert].raw[1];
+    return {uv_[idx].x, uv_[idx].y};
+}
+
+Vec3f Model::normal(int iface, int nvert) {
+    int idx = faces_[iface][nvert].raw[1];
+    return {norms_[idx].x, norms_[idx].y, norms_[idx].z};
+}
+
+Vec3f Model::get_world_normal(int iface, int nvert, Vec3f &world_normal) {
+    MathUtils::matrix_multiply_vec(get_transform_matrix(), normal(iface, nvert), world_normal);
+}
 
 /*void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
     std::string texfile(filename);

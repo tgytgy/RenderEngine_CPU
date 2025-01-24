@@ -7,6 +7,6 @@
 Light::Light(const Vec3f dir):_dir(dir) {
 }
 
-Vec3f Light::get_dir() const {
+Vec3f Light::get_dir() {
     return _dir;
 }

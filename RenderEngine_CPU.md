@@ -78,4 +78,4 @@ $$M_{viewport}=\begin{bmatrix}\frac{width}{2}&0&0&\frac{width}{2}\\0&\frac{heigh
 
 ## 5.光栅化
 三角形绘制到屏幕上见文章开头
-*blender模型导出设置:调整模型,让在blender以y向上看向-z方向观察得到希望在引擎中看到的效果,导出时向前调为-Y,向上调为+Z*
+*blender模型导出设置:调整模型,在blender中向+Y方向观察模型,导出时向前调为-Z,向上调为+Y*

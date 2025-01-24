@@ -3,10 +3,7 @@
 //
 
 #include "MathUtils.h"
-
 #include <iostream>
-
-#include "Matrix4x4.h"
 
 void MathUtils::set_rotate_matrix(const Vec3f& angles, Matrix4x4& matrix) {
     float sin_x = sinf(get_radians(angles.x));
@@ -101,4 +98,14 @@ Vec3f MathUtils::barycentric(const Vec2i &p0, const Vec2i &p1, const Vec2i &p2, 
 
 float MathUtils::get_radians(const float degrees) {
     return degrees * (Pi/180.f);
+}
+
+float MathUtils::vec_cos(const Vec3f &v0, const Vec3f &v1) {
+    return v0*v1/(v0.norm()*v1.norm());
+}
+
+void MathUtils::reverse_vec(Vec3f &v0) {
+    v0.x = -v0.x;
+    v0.y = -v0.y;
+    v0.z = -v0.z;
 }

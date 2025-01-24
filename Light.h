@@ -12,7 +12,7 @@ private:
     Vec3f _dir;
 public:
     explicit Light(Vec3f dir);
-    Vec3f get_dir() const;
+    Vec3f get_dir();
 };
 
 

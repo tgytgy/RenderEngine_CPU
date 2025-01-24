@@ -20,6 +20,8 @@ public:
     static void copy_vec(const Vec3f &v, Vec3f &ret);
     static Vec3f barycentric(const Vec2i &p0, const Vec2i &p1, const Vec2i &p2, const Vec2i &P);
     static float get_radians(float degrees);
+    static float vec_cos(const Vec3f &v0, const Vec3f &v1);
+    static void reverse_vec(Vec3f &v0);
 private:
     static void matrix_multiply_v(const Matrix4x4 &m, const Vec3f &v, const float &w, Vec3f &ret);
 };

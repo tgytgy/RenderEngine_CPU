@@ -7,7 +7,6 @@
 #include "tgaimage.h"
 #include "model.h"
 #include "geometry.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "Camera.h"
 #include "Light.h"
 #include "RenderOutput.h"
@@ -127,15 +126,15 @@ int main(int argc, char **argv) {
     const Vec3f obj_pos(0,0,-4);
     Vec3f obj_rotate(0,0,0);
     const Vec3f obj_scale(1,1,1);
-    auto* obj = new Model("obj/man.obj");  //man triangl
+    auto* obj = new Model("obj/man.obj", "obj/man.png");  //man triangl
     obj->set_transform(obj_pos, obj_rotate, obj_scale);
     Model* model = {obj};
     Camera camera(camera_pos, camera_rotate, resolution, fov, near_clip, far_clip, o_size, camera_type);
     Light light(light_dir);
     RenderOutput output(&camera, resolution, model, &light, 1);
 
-    for (int x = 0; x < 360; x++) {
-        obj_rotate.y = x;
+    for (int x = 0; x < 1; x++) {
+        obj_rotate.y = 0;
         obj->set_transform(obj_pos, obj_rotate, obj_scale);
         output.rasterize();
         output.write_png("output_directory/output_"+std::to_string(x));
@@ -145,8 +144,7 @@ int main(int argc, char **argv) {
     chrono::duration<double> duration = end - start;
     cout << "Function execution time: " << duration.count() << " seconds" << std::endl;
     return 0;
-
-
+    
     //读png写法
     /*// 图片路径
     const char* filepath = "example.png";
